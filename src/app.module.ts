@@ -5,15 +5,18 @@ import { LogisticModule } from './modules/logistic/logistic.module';
 import { CredentialModule } from './modules/credential/credential.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import appEnvironment from './environments/app.environment';
+import { config } from './environments/app.environment';
+import { DatabaseModule } from './database.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appEnvironment],
+      load: [config],
       envFilePath: '.env',
     }),
+
+    DatabaseModule,
     LogisticModule,
     CredentialModule,
   ],
@@ -23,9 +26,11 @@ import appEnvironment from './environments/app.environment';
 export class AppModule {
   static port: number;
   static mode: string;
+  static appname: string;
 
   constructor(private _configsvc: ConfigService) {
-    AppModule.port = this._configsvc.get('port');
-    AppModule.mode = this._configsvc.get('mode');
+    AppModule.port = this._configsvc.get('SERVER_PORT');
+    AppModule.mode = this._configsvc.get('SERVER_MODE');
+    AppModule.appname = this._configsvc.get('APP_NAME');
   }
 }
